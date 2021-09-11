@@ -13,8 +13,7 @@ const Navigation = () => {
       <Navbar.Brand href="#home">Tevian</Navbar.Brand>
       <Nav className="mr-auto">
         <Nav.Link><Link to="/">Home</Link></Nav.Link>
-        <Nav.Link href="#features">Features</Nav.Link>
-        <Nav.Link href="#pricing">Pricing</Nav.Link>
+        <Nav.Link><Link to='/persons'>Persons</Link></Nav.Link>
       </Nav>
       {user && <Nav.Link>{user.email}</Nav.Link>}
       {user && <Button onClick={e => handleLogout(dispatch, history)}>Log out</Button>}

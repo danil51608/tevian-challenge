@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { authActions } from "../../store/auth";
-import { StyledImage, StyledUpload, PersonForm } from "../StyledComponents/index";
+import { Button, Instuctions, HomeSection } from "../StyledComponents/index";
+import PersonSettings from "../UI/PersonSettings";
+import Upload from "../UI/Upload";
+import ExploredImage from "../UI/ExploredImage";
 import axios from "axios";
 
 const HomePage = () => {
@@ -15,16 +18,15 @@ const HomePage = () => {
   const url = "https://backend.facecloud.tevian.ru/api/v1/";
   const [faces, setFaces] = useState(null);
 
-  
   const handleUpload = (src) => {
     setImage(src);
     const img = new Image();
     img.src = URL.createObjectURL(src);
     img.onload = () => {
       const width = img.naturalWidth;
-      setProportion(width/500)
-    }
-  }
+      setProportion(width / 500);
+    };
+  };
 
   const handleDetect = async () => {
     try {
@@ -34,7 +36,8 @@ const HomePage = () => {
           "Content-Type": "image/jpeg",
         },
       });
-      setFaces(res.data.data)
+      setFaces(res.data.data);
+      console.log(res.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -53,7 +56,7 @@ const HomePage = () => {
       if (res.data.data[0]) {
         user.db = res.data.data[0].id;
         dispatch(authActions.setUser(JSON.stringify(user)));
-        console.log(res.data.data[0].id);
+        console.log(user);
       } else {
         createDatabase();
         console.log("No database found");
@@ -76,7 +79,9 @@ const HomePage = () => {
           },
         }
       );
-      console.log(res.data.data.id);
+      user.db = res.data.data.id;
+      dispatch(authActions.setUser(JSON.stringify(user)));
+      console.log(user);
     } catch (e) {
       console.log("Error creating database!");
     }
@@ -90,12 +95,19 @@ const HomePage = () => {
     }
   }, []);
   return (
-    <section>
-      <StyledImage src={image ? URL.createObjectURL(image) : null} faces={faces} proportion={proportion} />
-      <StyledUpload onChange={(e) => handleUpload(e.target.files[0])} />
-      {image && <button onClick={handleDetect}>Detect Faces!</button>}
-      {person && <PersonForm person={person}/>}
-    </section>
+    <HomeSection>
+      <ExploredImage
+        src={image ? URL.createObjectURL(image) : null}
+        faces={faces}
+        proportion={proportion}
+      />
+      {image && <Button onClick={handleDetect}>Detect Faces!</Button>}
+      <Upload onChange={(e) => handleUpload(e.target.files[0])} image />
+      {faces && (
+        <Instuctions>Click a face to see the person's parameters.</Instuctions>
+      )}
+      {person && <PersonSettings person={person} image={image} />}
+    </HomeSection>
   );
 };
 
