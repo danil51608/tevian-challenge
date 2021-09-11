@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { authActions } from "../../store/auth";
-import { StyledImage, StyledUpload, BoundingBox } from "../StyledComponents/index";
+import { StyledImage, StyledUpload, PersonForm } from "../StyledComponents/index";
 import axios from "axios";
 
 const HomePage = () => {
@@ -11,6 +11,7 @@ const HomePage = () => {
   const [proportion, setProportion] = useState(null);
   const dispatch = useDispatch();
   const user = JSON.parse(useSelector((state) => state.auth.user));
+  const person = useSelector((state) => state.person.person);
   const url = "https://backend.facecloud.tevian.ru/api/v1/";
   const [faces, setFaces] = useState(null);
 
@@ -33,7 +34,6 @@ const HomePage = () => {
           "Content-Type": "image/jpeg",
         },
       });
-      console.log(res);
       setFaces(res.data.data)
     } catch (e) {
       console.log(e);
@@ -47,7 +47,7 @@ const HomePage = () => {
           accept: "application/json",
           Authorization: `Bearer ${user.token}`,
         },
-      }); //ДОБАВИТЬ ПАГИНАЦИЮ!!!
+      });
 
       // если у пользователя есть БД, сохранить её id
       if (res.data.data[0]) {
@@ -89,12 +89,12 @@ const HomePage = () => {
       history.push("/login"); //перенаправить на страницу входа, если вход не был выполнен
     }
   }, []);
-  console.log(faces)
   return (
     <section>
       <StyledImage src={image ? URL.createObjectURL(image) : null} faces={faces} proportion={proportion} />
       <StyledUpload onChange={(e) => handleUpload(e.target.files[0])} />
-      <button onClick={handleDetect}>Detect Faces!</button>
+      {image && <button onClick={handleDetect}>Detect Faces!</button>}
+      {person && <PersonForm person={person}/>}
     </section>
   );
 };

@@ -1,6 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
+import {useDispatch} from "react-redux";
+import { personActions } from '../../store/person';
 
 export const FormWrapper = styled.div`
   width: 500px;
@@ -61,15 +63,28 @@ export const StyledUpload = (props) => {
 };
 
 export const StyledImage = (props) => {
+  const dispatch = useDispatch();
   return (
     <ImgContainer>
       <img {...props} />
       {props.faces
         ? props.faces.map((face, i) => {
             console.log(face.bbox);
-            return <BoundingBox key={i} box={face.bbox} proportion={props.proportion}/>;
+            return <BoundingBox key={i} box={face.bbox} proportion={props.proportion} onClick={e=>dispatch(personActions.setPerson(face.demographics))}/>;
           })
         : null}
     </ImgContainer>
   );
 };
+
+export const PersonForm = prop => {
+    const {person} = prop;
+    return(
+        <div>
+            <input type="text" value={person.age.mean}/><br/>
+            <input type="text" value={person.ethnicity}/><br/>
+            <input type="text" value={person.gender}/><br/>
+            <button>Save</button>
+        </div>
+    )
+}
