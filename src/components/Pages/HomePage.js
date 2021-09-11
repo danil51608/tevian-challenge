@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { authActions } from "../../store/auth";
-import { Button, Instuctions, HomeSection } from "../StyledComponents/index";
+import { Button, Instuctions, PageContainer } from "../StyledComponents/index";
 import PersonSettings from "../UI/PersonSettings";
 import Upload from "../UI/Upload";
 import ExploredImage from "../UI/ExploredImage";
@@ -95,7 +95,7 @@ const HomePage = () => {
     }
   }, []);
   return (
-    <HomeSection>
+    <PageContainer>
       <ExploredImage
         src={image ? URL.createObjectURL(image) : null}
         faces={faces}
@@ -107,7 +107,7 @@ const HomePage = () => {
         <Instuctions>Click a face to see the person's parameters.</Instuctions>
       )}
       {person && <PersonSettings person={person} image={image} />}
-    </HomeSection>
+    </PageContainer>
   );
 };
 

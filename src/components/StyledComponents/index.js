@@ -6,12 +6,12 @@ export const FormWrapper = styled.div`
 `;
 
 export const ImgContainer = styled.div`
-  width: 500px;
-  overflow: hidden;
+  width: ${(props) => props.width}px;
+//   overflow: hidden;
   position: relative;
   margin: 20px auto;
   & > img {
-    width: 500px;
+    width: 100%;
   }
 `;
 
@@ -89,9 +89,31 @@ width: 100%;
 text-align: center;
 `
 
-export const HomeSection = styled.div`
+export const PageContainer = styled.div`
 display: flex;
 flex-direction: column;
 align-items: center;
+padding: 10px;
+`
+
+export const CardWrapper = styled.div`
+display: flex;
+flex-direction: column;
+width: 400px;
+background: #343A40;
+color: #fff;
+padding: 10px;
+`
+
+export const PersonInfo = styled.div`
+font-size: 20px;
+& > span{
+    margin-top: -15px;
+    margin-bottom: -5px;
+    display: block;
+}
+& > label{
+    font-size: 15px;
+}
 `
 

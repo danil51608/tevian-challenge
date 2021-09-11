@@ -34,7 +34,7 @@ const PersonForm = (prop) => {
           },
         }
       );
-      console.log(res.data.data.id);
+      console.log(res);
       uploadPhoto(res.data.data.id);
     } catch (e) {
       console.log(e);

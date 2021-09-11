@@ -5,7 +5,7 @@ import { ImgContainer, BoundingBox } from "../StyledComponents/index";
 const ExploredImage = (props) => {
   const dispatch = useDispatch();
   return (
-    <ImgContainer>
+    <ImgContainer width={500}>
       <img {...props} />
       {props.faces
         ? props.faces.map((face, i) => {
