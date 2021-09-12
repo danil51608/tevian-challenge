@@ -27,14 +27,13 @@ const PersonForm = (prop) => {
     try {
       const res = await axios.post(
         `${url}persons`,
-        { data: { name, midName, surname, age }, database_id: user.db },
+        { data: { name, midName, surname, age, gender }, database_id: user.db },
         {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
         }
       );
-      console.log(res);
       uploadPhoto(res.data.data.id);
     } catch (e) {
       console.log(e);

@@ -100,12 +100,15 @@ export const CardWrapper = styled.div`
 display: flex;
 flex-direction: column;
 width: 400px;
-background: #343A40;
+background: #6E77D8;
 color: #fff;
 padding: 10px;
+margin-bottom: 20px;
+// border-radius: 10px;
+box-shadow: 2px 2px 10px #000;
 `
 
-export const PersonInfo = styled.div`
+export const PersonInfo = styled.form`
 font-size: 20px;
 & > span{
     margin-top: -15px;
@@ -114,6 +117,36 @@ font-size: 20px;
 }
 & > label{
     font-size: 15px;
+}
+& > input{
+    width: 100%;
+}
+
+`
+
+export const ShowMore = styled.button`
+background: none;
+border: none;
+color: #fff;
+&:hover{
+    color: #0069D9;
+}
+`
+
+export const EditCard = styled.div`
+text-align: right;
+& span:nth-child(1){
+    color: #29339B;
+};
+& span:nth-child(2){
+    color: #FF3A20;
+}
+& span:hover{
+    color: #fff;
+};
+
+& span{
+    margin-left: 10px;
 }
 `
 

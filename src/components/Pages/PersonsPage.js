@@ -27,7 +27,7 @@ const PersonsPage = () => {
 
   return (
     <PageContainer>
-      {persons.map(person => <PersonCard key={person.id} person={person.data} id={person.id}/>)}
+      {persons.map(person => <PersonCard key={person.id} person={person.data} id={person.id} getPersons={getPersons}/>)}
     </PageContainer>
   );
 };
