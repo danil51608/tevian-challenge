@@ -4,21 +4,22 @@ import {
   PersonInfo,
   ShowMore,
   EditCard,
-  Button
+  Button,
 } from "../StyledComponents/index";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import EditField from '../UI/EditField'
+import EditField from "../UI/EditField";
+import SelectGender from "./SelectGender";
 import axios from "axios";
 
 const PersonCard = (props) => {
   const user = JSON.parse(useSelector((state) => state.auth.user));
-  const [full, setFull] = useState(false);
+  const [full, setFull] = useState(true);
   const [photo, setPhoto] = useState(null);
-  const [edit, setEdit] = useState(false)
-  const { name, midName, surname, age, gender } = props.person;
+  const [edit, setEdit] = useState(false);
+  const { Name, Midname, Surname, Age, Gender } = props.person;
   const url = "https://backend.facecloud.tevian.ru/api/v1/";
 
   const getPhoto = async () => {
@@ -46,78 +47,81 @@ const PersonCard = (props) => {
     }
   };
 
-
   const handleDelete = async () => {
-    try{
-        const res = await axios.delete(`${url}persons/${props.id}`, {headers: {Authorization: `Bearer ${user.token}`}})
-        props.getPersons()
+    try {
+      const res = await axios.delete(`${url}persons/${props.id}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      props.getPersons();
+    } catch (e) {
+      console.log(e);
     }
-    catch (e) {
-        console.log(e)
-    }
-  }
+  };
 
   const handleSubmit = async (e) => {
-      e.preventDefault()
-      const {Name, Midname, Surname } = e.target
-      const data = {
-        data: {name: Name.value,
-         midName: Midname.value,
-         surname: Surname.value}
-      }
-      try{
-        const res = await axios.post(`${url}persons/${props.id}`, data, {headers: {
-            Authorization: `Bearer ${user.token}`,
-            accept: 'application/json',
-            'Content-Type': 'application/json'
-        }})
-        console.log(res)
-      }
-      catch(e){
-        console.log(e)
-      }
-      finally{
-          setEdit(false)
-      }
-  }
+    e.preventDefault();
+    const { Name, Midname, Surname, Age, Gender} = e.target;
+    const data = {
+      data: {
+        Name: Name.value,
+        Midname: Midname.value,
+        Surname: Surname.value,
+        Age: Age.value,
+        Gender: Gender.value,
+      },
+    };
+    try {
+      const res = await axios.post(`${url}persons/${props.id}`, data, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(res);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setEdit(false);
+    }
+  };
 
   useEffect(() => {
     getPhoto();
   }, []);
 
-
-
   return (
     <CardWrapper>
-      <ImgContainer width={300}>
+      <ImgContainer width={150}>
         {photo ? (
           <img src={`${url}photos/${photo}/image/face?width=0&height=0`} />
         ) : null}
       </ImgContainer>
       {full && (
         <>
-          <PersonInfo onSubmit={e=>handleSubmit(e)}>
-            <EditField label='Name' data={name} edit={edit}/>
-            <EditField label='Midname' data={midName} edit={edit}/>
-            <EditField label='Surname' data={surname} edit={edit}/>
-            <EditField label='Age' data={age} edit={edit} type='number'/>
-            <span>{gender}</span>
-            {edit && <Button type='submit'>Save</Button>}
+          <PersonInfo onSubmit={(e) => handleSubmit(e)}>
+            <EditField label="Name" data={Name} edit={edit} />
+            <EditField label="Midname" data={Midname} edit={edit} />
+            <EditField label="Surname" data={Surname} edit={edit} />
+            <EditField label="Age" data={Age} edit={edit} type="number" />
+            <SelectGender label="Gender" data={Gender} edit={edit} />
+            {edit && <Button type="submit">Save</Button>}
           </PersonInfo>
-          {!edit && <EditCard>
-            <span>
-              <FontAwesomeIcon icon={faPen} onClick={e=>setEdit(true)} />
-            </span>
-            <span>
-              <FontAwesomeIcon icon={faTrashAlt} onClick={handleDelete}/>
-            </span>
-          </EditCard>}
-          
+          {!edit && (
+            <EditCard>
+              <span>
+                <FontAwesomeIcon icon={faPen} onClick={(e) => setEdit(true)} />
+              </span>
+              <span>
+                <FontAwesomeIcon icon={faTrashAlt} onClick={handleDelete} />
+              </span>
+            </EditCard>
+          )}
         </>
       )}
-      <ShowMore onClick={(e) => setFull(!full)}>
+      {/* <ShowMore onClick={(e) => setFull(!full)}>
         Show {full ? "less" : "more"}
-      </ShowMore>
+      </ShowMore> */}
     </CardWrapper>
   );
 };

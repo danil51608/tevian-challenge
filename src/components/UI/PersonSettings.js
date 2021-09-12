@@ -1,42 +1,59 @@
 import { SettingsContainer, Button } from "../StyledComponents/index";
+import EditField from "../UI/EditField";
+import SelectGender from "./SelectGender";
+import { authActions } from "../../store/auth";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { Spinner, Alert } from "react-bootstrap";
 import axios from "axios";
 
-const PersonForm = (prop) => {
+const PersonSettings = (prop) => {
   const { image } = prop;
-  const person = prop.person.demographics;
-  const bbox = prop.person.bbox;
+  const dispatch = useDispatch();
   const user = JSON.parse(useSelector((state) => state.auth.user));
-  const [age, setAge] = useState(person.age.mean);
-  const [name, setName] = useState("");
-  const [midName, setMidName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [gender, setGender] = useState(person.gender);
-  useEffect(() => {
-    setAge(person.age.mean);
-    setName("");
-    setSurname("");
-    setMidName("");
-    setGender(person.gender);
-  }, [person]);
-
+  const personObj = useSelector((state) => state.person.person);
+  const loading = useSelector((state) => state.auth.loader);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const person = personObj.demographics;
+  const bbox = personObj.bbox;
   const url = "https://backend.facecloud.tevian.ru/api/v1/";
 
-  const uploadPerson = async () => {
+  useEffect(() => {
+    setError("");
+    setMessage("");
+  }, [person]);
+
+  const uploadPerson = async (e) => {
+    e.preventDefault();
+    setMessage(""); //очистить сообщение
+    setError(""); //очистить сообщение
+    dispatch(authActions.setLoader(true)); //показать loader
+
+    const { Name, Midname, Surname, Age, Gender } = e.target; //получение значений полей
+    //создание объекта данных для отправки
+    const data = {
+      data: {
+        Name: Name.value,
+        Midname: Midname.value,
+        Surname: Surname.value,
+        Age: Age.value,
+        Gender: Gender.value,
+      },
+      database_id: user.db,
+    };
     try {
-      const res = await axios.post(
-        `${url}persons`,
-        { data: { name, midName, surname, age, gender }, database_id: user.db },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
+      const res = await axios.post(`${url}persons`, data, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       uploadPhoto(res.data.data.id);
+      setMessage("Successfully Saved!");
     } catch (e) {
-      console.log(e);
+      setError("Couldn't upload the person!");
+    } finally {
+      dispatch(authActions.setLoader(false));
     }
   };
 
@@ -53,63 +70,24 @@ const PersonForm = (prop) => {
           },
         }
       );
-      console.log(res);
     } catch (e) {
-      console.log(e);
+      setError("Couldn't upload the person's photo!");
     }
   };
 
   return (
-    <SettingsContainer>
-      <label htmlFor={"name"}>Name</label>
-      <input
-        type="text"
-        id="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-
-      <label htmlFor={"midname"}>Middle Name</label>
-      <input
-        type="text"
-        id="midname"
-        value={midName}
-        onChange={(e) => setMidName(e.target.value)}
-      />
-
-      <label htmlFor={"surname"}>Surname</label>
-      <input
-        type="text"
-        id="surname"
-        value={surname}
-        onChange={(e) => setSurname(e.target.value)}
-      />
-
-      <label htmlFor={"age"}>Age</label>
-      <input
-        type="number"
-        id="age"
-        value={age}
-        onChange={(e) => setAge(e.target.value)}
-      />
-      <label htmlFor={"gender"}>Gender:</label>
-      <br />
-      <select
-        style={{ fontSize: "20px", fontWeight: "700" }}
-        onChange={(e) => setGender(e.target.value)}
-      >
-        <option selected={gender == "male"} value="male">
-          &#128102; Male
-        </option>
-        <option selected={gender == "female"} value="female">
-          &#128103; Female
-        </option>
-      </select>
-      <br />
-
-      <Button onClick={uploadPerson}>Save</Button>
+    <SettingsContainer onSubmit={(e) => uploadPerson(e)}>
+      <EditField label="Name" data={person.name} edit={true} />
+      <EditField label="Midname" data={person.midname} edit={true} />
+      <EditField label="Surname" data={person.surname} edit={true} />
+      <EditField label="Age" data={person.age.mean} edit={true} type="number" />
+      <SelectGender label="Gender" data={person.gender} edit={true} />
+      {!loading && <Button type="submit">Save</Button>}
+      {loading && <Spinner animation="border" variant="primary" />}
+      {message && <Alert variant="success">{message}</Alert>}
+      {error && <Alert variant="danger">{error}</Alert>}
     </SettingsContainer>
   );
 };
 
-export default PersonForm;
+export default PersonSettings;

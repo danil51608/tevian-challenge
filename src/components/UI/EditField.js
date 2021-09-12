@@ -1,13 +1,18 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 
 const EditField = (props) => {
-    const {label, edit, type='text'} = props
-    const [data, setValue] = useState(props.data)
+    const {label, edit, type='text', data=''} = props
+    const [value, setValue] = useState(data)
+
+    useEffect(() => {
+        setValue(data)
+    }, [data])
+
   return (
     <>
       <label htmlFor={label}>{label}:</label>
       {!edit && <span id={label}>{data}</span>}
-      {edit && <input name={label} type={type} value={data} onChange={e => setValue(e.target.value)}/>}
+      {edit && <input name={label} type={type} value={value} onChange={e => setValue(e.target.value)}/>}
     </>
   );
 };

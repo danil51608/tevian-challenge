@@ -6,9 +6,11 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {GlobalStyle} from "./components/StyledComponents"
 
 ReactDOM.render(
   <BrowserRouter>
+    <GlobalStyle />
     <Provider store={store}>
       <App />
     </Provider>

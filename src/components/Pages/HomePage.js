@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { authActions } from "../../store/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { authActions } from "../../store/auth";
 import { Button, Instuctions, PageContainer } from "../StyledComponents/index";
+import { Spinner } from "react-bootstrap";
 import PersonSettings from "../UI/PersonSettings";
 import Upload from "../UI/Upload";
 import ExploredImage from "../UI/ExploredImage";
@@ -14,6 +15,7 @@ const HomePage = () => {
   const [proportion, setProportion] = useState(null);
   const dispatch = useDispatch();
   const user = JSON.parse(useSelector((state) => state.auth.user));
+  const loading = useSelector((state) => state.auth.loader)
   const person = useSelector((state) => state.person.person);
   const url = "https://backend.facecloud.tevian.ru/api/v1/";
   const [faces, setFaces] = useState(null);
@@ -29,6 +31,7 @@ const HomePage = () => {
   };
 
   const handleDetect = async () => {
+    dispatch(authActions.setLoader(true));
     try {
       const res = await axios.post(`${url}detect?demographics=true`, image, {
         headers: {
@@ -40,6 +43,9 @@ const HomePage = () => {
       console.log(res.data.data);
     } catch (e) {
       console.log(e);
+    }
+    finally {
+      dispatch(authActions.setLoader(false));
     }
   };
 
@@ -96,17 +102,18 @@ const HomePage = () => {
   }, []);
   return (
     <PageContainer>
+      {faces && (
+        <Instuctions>Click a face to see the person's parameters.</Instuctions>
+      )}
       <ExploredImage
         src={image ? URL.createObjectURL(image) : null}
         faces={faces}
         proportion={proportion}
       />
-      {image && <Button onClick={handleDetect}>Detect Faces!</Button>}
-      <Upload onChange={(e) => handleUpload(e.target.files[0])} image />
-      {faces && (
-        <Instuctions>Click a face to see the person's parameters.</Instuctions>
-      )}
-      {person && <PersonSettings person={person} image={image} />}
+      {(image && !loading) && <Button onClick={handleDetect}>Detect Faces!</Button>}
+      {loading && <Spinner animation="border" variant="primary" />}
+      <Upload onChange={(e) => handleUpload(e.target.files[0])} image={image} />
+      {(image && person) && <PersonSettings image={image} />}
     </PageContainer>
   );
 };
