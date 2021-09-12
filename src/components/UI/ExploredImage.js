@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import { personActions } from "../../store/person";
 import { ImgContainer, BoundingBox } from "../StyledComponents/index";
 

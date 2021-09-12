@@ -19,12 +19,13 @@ const Navigation = () => {
           style={{ maxHeight: "30vh", alignItems: "center" }}
           navbarScroll
         >
-          <Nav.Link>
-            <Link to="/">Home</Link>
-          </Nav.Link>
-          <Nav.Link>
+          <Nav>
+            <Link exact to="/">Home</Link>
+          </Nav>
+          &nbsp;&nbsp;
+          <Nav>
             <Link to="/persons">Persons</Link>
-          </Nav.Link>
+          </Nav>
         </Nav>
         <Nav style={{ maxHeight: "30vh", alignItems: "center" }}>
           {user && <Nav.Link>{user.email}</Nav.Link>}

@@ -10,7 +10,9 @@ export const GlobalStyle = createGlobalStyle`
 `
 
 export const FormWrapper = styled.div`
-  width: 500px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
   margin: 20% auto;
 `;
 
@@ -137,6 +139,7 @@ margin-bottom: 20px;
     flex: 1;
     margin: -20px;
     margin-right: 20px;
+    margin-bottom: 0px;
     min-width: 100px;
     background: #F8F8FF;
 };

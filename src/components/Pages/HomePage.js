@@ -107,6 +107,10 @@ const HomePage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    setFaces(null)
+  }, [image])
+
   
   return (
     <PageContainer>
