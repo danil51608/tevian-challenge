@@ -1,10 +1,10 @@
 import { SettingsContainer, Button } from "../StyledComponents/index";
-import EditField from "../UI/EditField";
-import SelectGender from "./SelectGender";
 import { authActions } from "../../store/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { Spinner, Alert } from "react-bootstrap";
+import EditField from "../UI/EditField";
+import SelectGender from "./SelectGender";
 import axios from "axios";
 
 const PersonSettings = (prop) => {
@@ -15,10 +15,11 @@ const PersonSettings = (prop) => {
   const loading = useSelector((state) => state.auth.loader);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const person = personObj.demographics;
-  const bbox = personObj.bbox;
+  const person = personObj.demographics; //the selected person information 
+  const bbox = personObj.bbox; //the selected person bbox
   const url = "https://backend.facecloud.tevian.ru/api/v1/";
 
+  //clear messages if another person clicked
   useEffect(() => {
     setError("");
     setMessage("");
@@ -26,12 +27,13 @@ const PersonSettings = (prop) => {
 
   const uploadPerson = async (e) => {
     e.preventDefault();
-    setMessage(""); //очистить сообщение
-    setError(""); //очистить сообщение
-    dispatch(authActions.setLoader(true)); //показать loader
+    setMessage(""); //clear message
+    setError(""); //clear error
+    dispatch(authActions.setLoader(true)); //turn loader on
 
-    const { Name, Midname, Surname, Age, Gender } = e.target; //получение значений полей
-    //создание объекта данных для отправки
+    const { Name, Midname, Surname, Age, Gender } = e.target; //get fields values
+
+    //object to send
     const data = {
       data: {
         Name: Name.value,
@@ -43,22 +45,25 @@ const PersonSettings = (prop) => {
       database_id: user.db,
     };
     try {
+      //add person into DB request
       const res = await axios.post(`${url}persons`, data, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      uploadPhoto(res.data.data.id);
-      setMessage("Successfully Saved!");
+
+      uploadPhoto(res.data.data.id); //upload the person photo
+      setMessage("Successfully Saved!"); //set message
     } catch (e) {
-      setError("Couldn't upload the person!");
+      setError("Couldn't upload the person!"); //set error
     } finally {
       dispatch(authActions.setLoader(false));
     }
   };
 
+  
   const uploadPhoto = async (id) => {
-    const position = [bbox.x, bbox.y, bbox.width, bbox.height];
+    const position = [bbox.x, bbox.y, bbox.width, bbox.height]; //recognized face position
     try {
       const res = await axios.post(
         `${url}photos?face=${position}&person_id=${id}`,

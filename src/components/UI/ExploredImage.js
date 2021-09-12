@@ -7,8 +7,8 @@ const ExploredImage = (props) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(null);
   const handleClick = (i, face) => {
-    setSelected(i)
-    dispatch(personActions.setPerson(face))
+    setSelected(i) //set id of the selected bbox
+    dispatch(personActions.setPerson(face)) //save selected person into redux
   }
   return (
     <ImgContainer width={500}>
@@ -20,7 +20,7 @@ const ExploredImage = (props) => {
                 key={'person'+i}
                 box={face.bbox}
                 proportion={props.proportion}
-                selected={selected === i}
+                selected={selected === i} //paint the bbox border red if the current bbox is selected
                 onClick={(e) =>
                   handleClick(i, face)
                 }

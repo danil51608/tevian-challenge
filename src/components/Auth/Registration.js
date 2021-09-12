@@ -15,49 +15,6 @@ const Registration = () => {
   const dispatch = useDispatch();
   const history = useHistory()
 
-  // // check form validity
-  // const checkValidity = () => { 
-  //   let valid = true
-  //   if (password.trim() !== confirm.trim()) {
-  //     setPassError("Passwords are not the same!");
-  //     valid = false;
-  //   }
-  //   if (!email.trim() || !email.includes('@')) {
-  //     setEmailError("Invalid Email!");
-  //     valid = false;
-  //   }
-  //   if (password.trim().length < 8) {
-  //     setPassError("Password must be at least 8 characters!");
-  //     valid = false;
-  //   }
-  //   return valid;
-  // }
-
-  // const makeRequest = async () => {
-  //   try{
-  //     const res = await axios.post(`${url}users`, {
-  //       "billing_type": "demo",
-  //       email,
-  //       password
-  //     })
-  //   } catch(e){
-      
-  //   }
-  //   finally{
-  //     setLoader(false)
-  //   }
-  // }
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   setEmailError('');
-  //   setPassError('');
-  //   const valid = checkValidity()
-  //   if(!valid) return;
-  //   setLoader(true)
-  //   makeRequest()
-  // };
-
   return (
     <FormWrapper>
       <Form onSubmit={(e) => handleSubmit(e, dispatch, email, password, 'REGISTER', history)}>

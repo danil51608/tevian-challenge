@@ -2,10 +2,10 @@ import {
   CardWrapper,
   ImgContainer,
   PersonInfo,
-  ShowMore,
   EditCard,
   Button,
 } from "../StyledComponents/index";
+import { Alert, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,21 +16,26 @@ import axios from "axios";
 
 const PersonCard = (props) => {
   const user = JSON.parse(useSelector((state) => state.auth.user));
-  const [full, setFull] = useState(true);
+  const [loader, setLoader] = useState(false)
   const [photo, setPhoto] = useState(null);
   const [edit, setEdit] = useState(false);
+  const [error, setError] = useState('');
   const { Name, Midname, Surname, Age, Gender } = props.person;
   const url = "https://backend.facecloud.tevian.ru/api/v1/";
 
+
+  //get person
   const getPhoto = async () => {
+    setLoader(true) //turn loader on
     try {
+      //get photo id 
       const res = await axios.get(`${url}persons/${props.id}/photos`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      console.log(res);
 
+      //get photo
       const photo = await axios.get(
         `${url}photos/${res.data.data[0].id}/image/face?width=0&height=0`,
         {
@@ -43,24 +48,35 @@ const PersonCard = (props) => {
 
       setPhoto(res.data.data[0].id);
     } catch (e) {
-      console.log(e);
+      setError('Error loading the photo!') //set error message
+    }
+    finally {
+      setLoader(false) //turn loader off
     }
   };
 
+  //delete person
   const handleDelete = async () => {
+    setLoader(true); //turn loader on
     try {
       const res = await axios.delete(`${url}persons/${props.id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      props.getPersons();
+      props.getPersons(); //reload the page after deleting
     } catch (e) {
-      console.log(e);
+      setError('Error during deleting occured!') //set error message
+    }
+    finally {
+      setLoader(false); //turn loader o
     }
   };
 
+  //edit person request
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { Name, Midname, Surname, Age, Gender} = e.target;
+
+    //edited object
     const data = {
       data: {
         Name: Name.value,
@@ -70,7 +86,9 @@ const PersonCard = (props) => {
         Gender: Gender.value,
       },
     };
+    setLoader(true)
     try {
+      //send edited object 
       const res = await axios.post(`${url}persons/${props.id}`, data, {
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -78,14 +96,15 @@ const PersonCard = (props) => {
           "Content-Type": "application/json",
         },
       });
-      console.log(res);
     } catch (e) {
-      console.log(e);
+      setError('Cannot get the person!') //set error
     } finally {
-      setEdit(false);
+      setEdit(false); //enable edit mode
+      setLoader(false) // turn loader off
     }
   };
 
+  //get persons photos on loading
   useEffect(() => {
     getPhoto();
   }, []);
@@ -97,7 +116,6 @@ const PersonCard = (props) => {
           <img src={`${url}photos/${photo}/image/face?width=0&height=0`} />
         ) : null}
       </ImgContainer>
-      {full && (
         <>
           <PersonInfo onSubmit={(e) => handleSubmit(e)}>
             <EditField label="Name" data={Name} edit={edit} />
@@ -105,7 +123,8 @@ const PersonCard = (props) => {
             <EditField label="Surname" data={Surname} edit={edit} />
             <EditField label="Age" data={Age} edit={edit} type="number" />
             <SelectGender label="Gender" data={Gender} edit={edit} />
-            {edit && <Button type="submit">Save</Button>}
+            {(edit && !loader) && <Button type="submit">Save</Button>}
+            {loader && <Spinner animation="border" variant="primary" />}
           </PersonInfo>
           {!edit && (
             <EditCard>
@@ -118,10 +137,7 @@ const PersonCard = (props) => {
             </EditCard>
           )}
         </>
-      )}
-      {/* <ShowMore onClick={(e) => setFull(!full)}>
-        Show {full ? "less" : "more"}
-      </ShowMore> */}
+     {error && <Alert variant="danger">{error}</Alert>}
     </CardWrapper>
   );
 };
