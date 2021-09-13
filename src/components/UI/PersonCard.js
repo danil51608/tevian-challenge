@@ -96,10 +96,11 @@ const PersonCard = (props) => {
           "Content-Type": "application/json",
         },
       });
+      props.getPersons()
     } catch (e) {
       setError('Cannot get the person!') //set error
     } finally {
-      setEdit(false); //enable edit mode
+      setEdit(false); //disable edit mode
       setLoader(false) // turn loader off
     }
   };
