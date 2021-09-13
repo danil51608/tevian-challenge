@@ -33,4 +33,4 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
-yarn.lock
+.lock
